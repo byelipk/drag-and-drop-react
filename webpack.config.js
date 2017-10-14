@@ -12,7 +12,8 @@ module.exports = {
   entry: {
     vertical: './src/vertical.jsx',
     horizontal: './src/horizontal.jsx',
-    multihorizontal: './src/multihorizontal.jsx'
+    multihorizontal: './src/multihorizontal.jsx',
+    grid: './src/grid.jsx'
   },
   devtool: 'source-map',
   output: {

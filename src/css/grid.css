@@ -1,0 +1,33 @@
+body {
+  margin: 0;
+  font-family: 'Roboto';
+  background: rgb(0, 121, 191);
+}
+
+.board {
+  min-height: 100vh;
+  min-width: 100vw;
+  padding: 1rem;
+  display: flex;
+  align-items: start;
+}
+
+.column {
+  background: #E2E4E6;
+  border-radius: 3px;
+  margin-right: 1rem;
+  padding: 1rem;
+}
+
+.column-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-width: 20%;
+  max-width: 20%;
+  cursor: -webkit-grab;
+}
+
+.is-dragging {
+  background: lightyellow;
+  cursor: -webkit-grabbing;
+}
