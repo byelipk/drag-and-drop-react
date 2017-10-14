@@ -34130,7 +34130,23 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var LISTS = [{ name: "Todo list", id: 4 }, { name: "What is Kanban?", id: 3 }, { name: "Questions about the event", id: 2 }, { name: "Get started", id: 1 }];
+var LISTS = [{
+  name: "Todo list",
+  id: 4,
+  items: [{ text: "blah 1", id: 1 }, { text: "blah 2", id: 2 }, { text: "blah 3", id: 3 }, { text: "blah 4", id: 4 }]
+}, {
+  name: "What is Kanban?",
+  id: 3,
+  items: [{ text: "blah 5", id: 5 }, { text: "blah 6", id: 6 }, { text: "blah 7", id: 7 }]
+}, {
+  name: "Questions about the event",
+  id: 2,
+  items: [{ text: "blah 8", id: 8 }, { text: "blah 9", id: 9 }, { text: "blah 10", id: 10 }]
+}, {
+  name: "Get started",
+  id: 1,
+  items: [{ text: "blah 11", id: 11 }, { text: "blah 12", id: 12 }]
+}];
 
 // a little function to help us with reordering the result
 function reorder(list, startIndex, endIndex) {
@@ -34143,10 +34159,22 @@ function reorder(list, startIndex, endIndex) {
   result.splice(endIndex, 0, removed);
 
   return result;
-};
+}
 
 ///////////////////////////////////////
 
+// class List extends React.Component {
+//   render() {
+//     const name = this.props.list.name;
+//     const text = this.props.list.text;
+
+//     return (
+//       <Droppable droppableId={name} type="LIST" direction="vertical">
+//         <div className="column-item">{text}</div>
+//       </Droppable>
+//     );
+//   }
+// }
 
 var Column = function (_React$Component) {
   _inherits(Column, _React$Component);
@@ -34157,13 +34185,17 @@ var Column = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (Column.__proto__ || Object.getPrototypeOf(Column)).call(this, props));
 
     _this.classNames = _this.classNames.bind(_this);
+
+    _this.state = {
+      items: _this.props.items
+    };
     return _this;
   }
 
   _createClass(Column, [{
     key: "classNames",
     value: function classNames(isDragging) {
-      return "column " + (isDragging ? 'is-dragging' : '');
+      return "column " + (isDragging ? "is-dragging" : "");
     }
   }, {
     key: "render",
@@ -34181,12 +34213,27 @@ var Column = function (_React$Component) {
             { className: "column-wrapper" },
             _react2.default.createElement(
               "div",
-              _extends({
+              {
                 className: _this2.classNames(snapshot.isDragging),
                 ref: provided.innerRef,
                 style: provided.draggableStyle
-              }, provided.dragHandleProps),
-              name
+              },
+              _react2.default.createElement(
+                "header",
+                _extends({ className: "column-header" }, provided.dragHandleProps),
+                name
+              ),
+              _react2.default.createElement(
+                "div",
+                { className: "column-body" },
+                _this2.props.list.items.map(function (item) {
+                  return _react2.default.createElement(
+                    "div",
+                    { key: item.id, className: "column-item" },
+                    item.text
+                  );
+                })
+              )
             ),
             provided.placeholder
           );
@@ -34231,7 +34278,8 @@ var Board = function (_React$Component2) {
       var draggableId = result.draggableId;
 
       // We've reordered items within the same list
-      if (dstId === srcId) {
+      if (dstId === srcId && result.type === "COLUMN") {
+        console.log("LOLZ", result);
         var items = reorder(this.state.lists, result.source.index, result.destination.index);
 
         this.setState({ lists: items });
@@ -34244,7 +34292,10 @@ var Board = function (_React$Component2) {
 
       return _react2.default.createElement(
         _reactBeautifulDnd.DragDropContext,
-        { onDragStart: this.onDragStart, onDragEnd: this.onDragEnd },
+        {
+          onDragStart: this.onDragStart,
+          onDragEnd: this.onDragEnd
+        },
         _react2.default.createElement(
           _reactBeautifulDnd.Droppable,
           { droppableId: "board", type: "COLUMN", direction: "horizontal" },
@@ -34265,7 +34316,7 @@ var Board = function (_React$Component2) {
   return Board;
 }(_react2.default.Component);
 
-_reactDom2.default.render(_react2.default.createElement(Board, null), document.querySelector('#root'));
+_reactDom2.default.render(_react2.default.createElement(Board, null), document.querySelector("#root"));
 
 /***/ }),
 /* 416 */

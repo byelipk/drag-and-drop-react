@@ -12,13 +12,6 @@ body {
   align-items: start;
 }
 
-.column {
-  background: #E2E4E6;
-  border-radius: 3px;
-  margin-right: 1rem;
-  padding: 1rem;
-}
-
 .column-wrapper {
   display: flex;
   flex-direction: column;
@@ -26,8 +19,31 @@ body {
   max-width: 20%;
   cursor: -webkit-grab;
 }
-
-.is-dragging {
-  background: lightyellow;
+.column {
+  background: #E2E4E6;
+  border-radius: 3px;
+  margin-right: 1rem;
+}
+.column.is-dragging {
   cursor: -webkit-grabbing;
+  box-shadow: 1px 1px 4px 1px rgba(0, 0, 0, 0.2);
+}
+.column-header {
+ padding: 0.5rem 1rem;
+ border-radius: 3px;
+}
+.column-header:hover {
+  background: #dadada;
+}
+.column-header:active {
+  background: #c1c2c3;
+}
+.column-body {
+  padding: 1rem;
+}
+.column-item {
+  background-color: white;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 2px;
 }
