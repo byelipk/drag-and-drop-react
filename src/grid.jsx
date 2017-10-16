@@ -50,19 +50,48 @@ function reorder(list, startIndex, endIndex) {
 }
 
 ///////////////////////////////////////
+class Item extends React.Component {
+  render() {
+    const item = this.props.item;
+    const draggableId = `draggable-item-${item.id}`;
 
-// class List extends React.Component {
-//   render() {
-//     const name = this.props.list.name;
-//     const text = this.props.list.text;
+    return (
+      <Draggable draggableId={draggableId} type="ITEM">
+        {(provided) => (
+          <div>
+            <div 
+              className="column-item" 
+              style={provided.draggableStyle}
+              ref={provided.innerRef}
+              {...provided.dragHandleProps}>
+              {item.text}
+            </div>
+            {provided.placeholder}
+          </div>
+        )}
+      </Draggable>
+    );
+  }
+}
+class List extends React.Component {
+  render() {
+    const list = this.props.list;
+    const droppableId = `droppable-list-${list.id}`;
 
-//     return (
-//       <Droppable droppableId={name} type="LIST" direction="vertical">
-//         <div className="column-item">{text}</div>
-//       </Droppable>
-//     );
-//   }
-// }
+    return (
+      <Droppable droppableId={droppableId} type="ITEM" direction="vertical">
+        {(provider) => (
+          <div className="column-body" ref={provider.innerRef}>
+            {this.props.list.items.map(item => (
+              <Item key={item.id} item={item}/>
+            ))}
+            {provider.placeholder}
+          </div>
+        )}
+      </Droppable>
+    );
+  }
+}
 
 class Column extends React.Component {
   constructor(props) {
@@ -80,23 +109,16 @@ class Column extends React.Component {
   }
 
   render() {
+    const draggableId = `draggable-column-${this.props.list.id}`;
     const name = this.props.list.name;
 
     return (
-      <Draggable draggableId={name} type="COLUMN">
+      <Draggable draggableId={draggableId} type="COLUMN">
         {(provided, snapshot) => (
           <div className="column-wrapper">
-            <div
-              className={this.classNames(snapshot.isDragging)}
-              ref={provided.innerRef}
-              style={provided.draggableStyle}
-            >
+            <div className={this.classNames(snapshot.isDragging)} ref={provided.innerRef} style={provided.draggableStyle}>
               <header className="column-header" {...provided.dragHandleProps}>{name}</header>
-              <div className="column-body">
-                {this.props.list.items.map(item => (
-                  <div key={item.id} className="column-item">{item.text}</div>
-                ))}
-              </div>
+              <List list={this.props.list}/>
             </div>
             {provided.placeholder}
           </div>
@@ -131,8 +153,7 @@ class Board extends React.Component {
     const draggableId = result.draggableId;
 
     // We've reordered items within the same list
-    if (dstId === srcId && result.type === "COLUMN") {
-      console.log("LOLZ", result)
+    if (dstId === srcId) {
       let items = reorder(
         this.state.lists,
         result.source.index,
@@ -140,6 +161,9 @@ class Board extends React.Component {
       );
 
       this.setState({ lists: items });
+    }
+    else {
+      console.log("LOLZ", result)
     }
   }
 

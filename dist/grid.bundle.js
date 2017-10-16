@@ -34163,33 +34163,95 @@ function reorder(list, startIndex, endIndex) {
 
 ///////////////////////////////////////
 
-// class List extends React.Component {
-//   render() {
-//     const name = this.props.list.name;
-//     const text = this.props.list.text;
+var Item = function (_React$Component) {
+  _inherits(Item, _React$Component);
 
-//     return (
-//       <Droppable droppableId={name} type="LIST" direction="vertical">
-//         <div className="column-item">{text}</div>
-//       </Droppable>
-//     );
-//   }
-// }
+  function Item() {
+    _classCallCheck(this, Item);
 
-var Column = function (_React$Component) {
-  _inherits(Column, _React$Component);
+    return _possibleConstructorReturn(this, (Item.__proto__ || Object.getPrototypeOf(Item)).apply(this, arguments));
+  }
+
+  _createClass(Item, [{
+    key: "render",
+    value: function render() {
+      var item = this.props.item;
+
+      return _react2.default.createElement(
+        _reactBeautifulDnd.Draggable,
+        { draggableId: item.text },
+        function (provided) {
+          return _react2.default.createElement(
+            "div",
+            null,
+            _react2.default.createElement(
+              "div",
+              _extends({
+                className: "column-item",
+                style: provided.draggableStyle,
+                ref: provided.innerRef
+              }, provided.dragHandleProps),
+              item.text
+            ),
+            provided.placeholder
+          );
+        }
+      );
+    }
+  }]);
+
+  return Item;
+}(_react2.default.Component);
+
+var List = function (_React$Component2) {
+  _inherits(List, _React$Component2);
+
+  function List() {
+    _classCallCheck(this, List);
+
+    return _possibleConstructorReturn(this, (List.__proto__ || Object.getPrototypeOf(List)).apply(this, arguments));
+  }
+
+  _createClass(List, [{
+    key: "render",
+    value: function render() {
+      var _this3 = this;
+
+      var droppableId = this.props.list.name + "-" + this.props.list.id;
+
+      return _react2.default.createElement(
+        _reactBeautifulDnd.Droppable,
+        { droppableId: "list", type: "ITEM", direction: "vertical" },
+        function (provider) {
+          return _react2.default.createElement(
+            "div",
+            { className: "column-body", ref: provider.innerRef },
+            _this3.props.list.items.map(function (item) {
+              return _react2.default.createElement(Item, { key: item.id, item: item });
+            })
+          );
+        }
+      );
+    }
+  }]);
+
+  return List;
+}(_react2.default.Component);
+
+var Column = function (_React$Component3) {
+  _inherits(Column, _React$Component3);
 
   function Column(props) {
     _classCallCheck(this, Column);
 
-    var _this = _possibleConstructorReturn(this, (Column.__proto__ || Object.getPrototypeOf(Column)).call(this, props));
+    var _this4 = _possibleConstructorReturn(this, (Column.__proto__ || Object.getPrototypeOf(Column)).call(this, props));
 
-    _this.classNames = _this.classNames.bind(_this);
+    _this4.classNames = _this4.classNames.bind(_this4);
 
-    _this.state = {
-      items: _this.props.items
+    _this4.state = {
+      items: _this4.props.items
     };
-    return _this;
+    return _this4;
   }
 
   _createClass(Column, [{
@@ -34200,7 +34262,7 @@ var Column = function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this5 = this;
 
       var name = this.props.list.name;
 
@@ -34214,7 +34276,7 @@ var Column = function (_React$Component) {
             _react2.default.createElement(
               "div",
               {
-                className: _this2.classNames(snapshot.isDragging),
+                className: _this5.classNames(snapshot.isDragging),
                 ref: provided.innerRef,
                 style: provided.draggableStyle
               },
@@ -34223,17 +34285,7 @@ var Column = function (_React$Component) {
                 _extends({ className: "column-header" }, provided.dragHandleProps),
                 name
               ),
-              _react2.default.createElement(
-                "div",
-                { className: "column-body" },
-                _this2.props.list.items.map(function (item) {
-                  return _react2.default.createElement(
-                    "div",
-                    { key: item.id, className: "column-item" },
-                    item.text
-                  );
-                })
-              )
+              _react2.default.createElement(List, { list: _this5.props.list })
             ),
             provided.placeholder
           );
@@ -34245,21 +34297,21 @@ var Column = function (_React$Component) {
   return Column;
 }(_react2.default.Component);
 
-var Board = function (_React$Component2) {
-  _inherits(Board, _React$Component2);
+var Board = function (_React$Component4) {
+  _inherits(Board, _React$Component4);
 
   function Board(props) {
     _classCallCheck(this, Board);
 
-    var _this3 = _possibleConstructorReturn(this, (Board.__proto__ || Object.getPrototypeOf(Board)).call(this, props));
+    var _this6 = _possibleConstructorReturn(this, (Board.__proto__ || Object.getPrototypeOf(Board)).call(this, props));
 
-    _this3.onDragStart = _this3.onDragStart.bind(_this3);
-    _this3.onDragEnd = _this3.onDragEnd.bind(_this3);
+    _this6.onDragStart = _this6.onDragStart.bind(_this6);
+    _this6.onDragEnd = _this6.onDragEnd.bind(_this6);
 
-    _this3.state = {
+    _this6.state = {
       lists: LISTS
     };
-    return _this3;
+    return _this6;
   }
 
   _createClass(Board, [{
@@ -34278,17 +34330,18 @@ var Board = function (_React$Component2) {
       var draggableId = result.draggableId;
 
       // We've reordered items within the same list
-      if (dstId === srcId && result.type === "COLUMN") {
-        console.log("LOLZ", result);
+      if (dstId === srcId) {
         var items = reorder(this.state.lists, result.source.index, result.destination.index);
 
         this.setState({ lists: items });
+      } else {
+        console.log("LOLZ", result);
       }
     }
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this7 = this;
 
       return _react2.default.createElement(
         _reactBeautifulDnd.DragDropContext,
@@ -34303,7 +34356,7 @@ var Board = function (_React$Component2) {
             return _react2.default.createElement(
               "div",
               { className: "board", ref: provided.innerRef },
-              _this4.state.lists.map(function (list) {
+              _this7.state.lists.map(function (list) {
                 return _react2.default.createElement(Column, { key: list.id, list: list });
               })
             );
