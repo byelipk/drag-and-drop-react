@@ -153,17 +153,76 @@ class Board extends React.Component {
     const draggableId = result.draggableId;
 
     // We've reordered items within the same list
-    if (dstId === srcId) {
-      let items = reorder(
-        this.state.lists,
-        result.source.index,
-        result.destination.index
-      );
+    if (dstId === srcId) { 
+      if (result.type === "COLUMN") {
+        let items = reorder(
+          this.state.lists,
+          result.source.index,
+          result.destination.index
+        );
+  
+        this.setState({ lists: items });
+      } 
+      else {
+        const id = parseInt(srcId.replace('droppable-list-', ''), 10);
+        const list = this.state.lists.filter(list => list.id === id);
 
-      this.setState({ lists: items });
+        if (list.length === 1) {
+          list[0].items = reorder(
+            list[0].items,
+            result.source.index,
+            result.destination.index
+          );
+
+          this.setState({ lists: this.state.lists });
+        }
+        else {
+          console.info('SHIT');
+        }
+      }
     }
     else {
-      console.log("LOLZ", result)
+      const srcIdInt = parseInt(srcId.replace('droppable-list-', ''), 10);
+      const dstIdInt = parseInt(dstId.replace('droppable-list-', ''), 10);
+      const draggableIdInt = parseInt(draggableId.replace('draggable-item-', ''), 10);
+
+      var srcList = null;
+      var srcListIndex = null;
+      var dstList = null;
+      var dstListIndex = null;
+
+      // find source and destination lists
+      for (let index = 0; index < this.state.lists.length; index++) {
+        let list = this.state.lists[index];
+
+        if (srcList !== null && dstList !== null) {
+          break;
+        }
+        else if (list.id === srcIdInt) {
+          srcList = list;
+          srcListIndex = index;
+        }
+        else if (list.id === dstIdInt) {
+          dstList = list;
+          dstListIndex = index;
+        }
+      }
+
+      // find the item were swapping from srcList list to dstList
+      var theItem = null;
+      for (let index = 0; index < srcList.items.length; index++) {
+        let element = srcList.items[index];
+        if (element.id === draggableIdInt) {
+          theItem = element;
+          break;
+        }
+      }
+
+      srcList.items = srcList.items.filter(item => item.id !== theItem.id);
+
+      dstList.items.splice(result.destination.index, 0, theItem);
+
+      this.setState({ lists: this.state.lists });
     }
   }
 
