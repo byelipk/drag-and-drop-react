@@ -1,5 +1,5 @@
 {
-  "name": "Kanban",
+  "name": "kanban",
   "version": "1.0.0",
   "description": "A tic tac toe game to learn more about React and Phoenix",
   "main": "/priv/static/app.js",
